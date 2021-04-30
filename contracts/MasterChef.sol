@@ -68,7 +68,7 @@ contract MasterChef is Ownable {
     // PUD tokens created per block.
     uint256 public pudPerBlock;
     // Bonus muliplier for early pud makers.
-    uint256 public BONUS_MULTIPLIER = 1;
+    uint256 public BONUS_MULTIPLIER = 100;
     // The migrator contract. It has a lot of power. Can only be set through governance (owner).
     IMigratorChef public migrator;
 
