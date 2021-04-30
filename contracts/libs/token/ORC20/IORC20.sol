@@ -2,7 +2,7 @@
 
 pragma solidity >=0.4.0;
 
-interface IHRC20 {
+interface IORC20 {
     /**
      * @dev Returns the amount of tokens in existence.
      */

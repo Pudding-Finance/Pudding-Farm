@@ -1,13 +1,13 @@
 pragma solidity 0.6.12;
 
-import "./token/HRC20/HRC20.sol";
+import "./token/ORC20/ORC20.sol";
 
-contract MockHRC20 is HRC20 {
+contract MockORC20 is ORC20 {
     constructor(
         string memory name,
         string memory symbol,
         uint256 supply
-    ) public HRC20(name, symbol) {
+    ) public ORC20(name, symbol) {
         _mint(msg.sender, supply);
 
     }

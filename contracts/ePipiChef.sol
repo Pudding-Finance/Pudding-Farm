@@ -1,16 +1,13 @@
 pragma solidity 0.6.12;
 
-import './libs/math/SafeMath.sol';
-import './libs/token/HRC20/IHRC20.sol';
-import './libs/token/HRC20/SafeHRC20.sol';
-import './libs/access/Ownable.sol';
+import "./libs/math/SafeMath.sol";
+import "./libs/token/ORC20/IORC20.sol";
+import "./libs/token/ORC20/SafeORC20.sol";
+import "./libs/access/Ownable.sol";
 
-// import "@nomiclabs/buidler/console.sol";
-
-
-contract PipiChef is Ownable {
+contract ePuddingChef is Ownable {
     using SafeMath for uint256;
-    using SafeHRC20 for IHRC20;
+    using SafeORC20 for IORC20;
 
     // Info of each user.
     struct UserInfo {
@@ -20,19 +17,19 @@ contract PipiChef is Ownable {
 
     // Info of each pool.
     struct PoolInfo {
-        IHRC20 lpToken;           // Address of LP token contract.
-        uint256 allocPoint;       // How many allocation points assigned to this pool. PIPIs to distribute per block.
-        uint256 lastRewardBlock;  // Last block number that PIPIs distribution occurs.
-        uint256 accPipiPerShare; // Accumulated PIPIs per share, times 1e12. See below.
+        IORC20 lpToken;           // Address of LP token contract.
+        uint256 allocPoint;       // How many allocation points assigned to this pool. PUDs to distribute per block.
+        uint256 lastRewardBlock;  // Last block number that PUDs distribution occurs.
+        uint256 accPuddingPerShare; // Accumulated PUDs per share, times 1e12. See below.
     }
 
-    // The PIPI TOKEN!
-    IHRC20 public xPipi;
-    IHRC20 public rewardToken;
+    // The PUD TOKEN!
+    IORC20 public xPudding;
+    IORC20 public rewardToken;
 
     // uint256 public maxStaking;
 
-    // PIPI tokens created per block.
+    // PUD tokens created per block.
     uint256 public rewardPerBlock;
 
     // Info of each pool.
@@ -41,9 +38,9 @@ contract PipiChef is Ownable {
     mapping (address => UserInfo) public userInfo;
     // Total allocation poitns. Must be the sum of all allocation points in all pools.
     uint256 private totalAllocPoint = 0;
-    // The block number when PIPI mining starts.
+    // The block number when PUD mining starts.
     uint256 public startBlock;
-    // The block number when PIPI mining ends.
+    // The block number when PUD mining ends.
     uint256 public bonusEndBlock;
 
     event Deposit(address indexed user, uint256 amount);
@@ -51,13 +48,13 @@ contract PipiChef is Ownable {
     event EmergencyWithdraw(address indexed user, uint256 amount);
 
     constructor(
-        IHRC20 _xPipi,
-        IHRC20 _rewardToken,
+        IORC20 _xPudding,
+        IORC20 _rewardToken,
         uint256 _rewardPerBlock,
         uint256 _startBlock,
         uint256 _bonusEndBlock
     ) public {
-        xPipi = _xPipi;
+        xPudding = _xPudding;
         rewardToken = _rewardToken;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
@@ -65,10 +62,10 @@ contract PipiChef is Ownable {
 
         // staking pool
         poolInfo.push(PoolInfo({
-            lpToken: _xPipi,
+            lpToken: _xPudding,
             allocPoint: 1000,
             lastRewardBlock: startBlock,
-            accPipiPerShare: 0
+            accPuddingPerShare: 0
         }));
 
         totalAllocPoint = 1000;
@@ -96,14 +93,14 @@ contract PipiChef is Ownable {
     function pendingReward(address _user) external view returns (uint256) {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[_user];
-        uint256 accPipiPerShare = pool.accPipiPerShare;
+        uint256 accPuddingPerShare = pool.accPuddingPerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 pipiReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-            accPipiPerShare = accPipiPerShare.add(pipiReward.mul(1e12).div(lpSupply));
+            uint256 pudReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
+            accPuddingPerShare = accPuddingPerShare.add(pudReward.mul(1e12).div(lpSupply));
         }
-        return user.amount.mul(accPipiPerShare).div(1e12).sub(user.rewardDebt);
+        return user.amount.mul(accPuddingPerShare).div(1e12).sub(user.rewardDebt);
     }
 
     // Update reward variables of the given pool to be up-to-date.
@@ -118,8 +115,8 @@ contract PipiChef is Ownable {
             return;
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 pipiReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        pool.accPipiPerShare = pool.accPipiPerShare.add(pipiReward.mul(1e12).div(lpSupply));
+        uint256 pudReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
+        pool.accPuddingPerShare = pool.accPuddingPerShare.add(pudReward.mul(1e12).div(lpSupply));
         pool.lastRewardBlock = block.number;
     }
 
@@ -132,7 +129,7 @@ contract PipiChef is Ownable {
     }
 
 
-    // Stake SYRUP tokens to SmartChef
+    // Stake xPUD tokens to xPuddingChef
     function deposit(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
@@ -141,7 +138,7 @@ contract PipiChef is Ownable {
 
         updatePool(0);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accPipiPerShare).div(1e12).sub(user.rewardDebt);
+            uint256 pending = user.amount.mul(pool.accPuddingPerShare).div(1e12).sub(user.rewardDebt);
             if(pending > 0) {
                 rewardToken.safeTransfer(address(msg.sender), pending);
             }
@@ -150,18 +147,18 @@ contract PipiChef is Ownable {
             pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
             user.amount = user.amount.add(_amount);
         }
-        user.rewardDebt = user.amount.mul(pool.accPipiPerShare).div(1e12);
+        user.rewardDebt = user.amount.mul(pool.accPuddingPerShare).div(1e12);
 
         emit Deposit(msg.sender, _amount);
     }
 
-    // Withdraw SYRUP tokens from STAKING.
+    // Withdraw xPUD tokens from STAKING.
     function withdraw(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(0);
-        uint256 pending = user.amount.mul(pool.accPipiPerShare).div(1e12).sub(user.rewardDebt);
+        uint256 pending = user.amount.mul(pool.accPuddingPerShare).div(1e12).sub(user.rewardDebt);
         if(pending > 0) {
             rewardToken.safeTransfer(address(msg.sender), pending);
         }
@@ -169,7 +166,7 @@ contract PipiChef is Ownable {
             user.amount = user.amount.sub(_amount);
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
         }
-        user.rewardDebt = user.amount.mul(pool.accPipiPerShare).div(1e12);
+        user.rewardDebt = user.amount.mul(pool.accPuddingPerShare).div(1e12);
 
         emit Withdraw(msg.sender, _amount);
     }

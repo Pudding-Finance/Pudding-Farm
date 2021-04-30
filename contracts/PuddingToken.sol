@@ -1,40 +1,13 @@
 pragma solidity 0.6.12;
 
-import "./libs/token/HRC20/HRC20.sol";
+import "./libs/token/ORC20/ORC20.sol";
 
-import "./PipiToken.sol";
-
-// PipiBar with Governance.
-contract PipiBar is HRC20('Little Pipi Shrimp Token', 'xPIPI') {
+// PuddingToken with Governance.
+contract PuddingToken is ORC20('Pudding Token', 'PUD') {
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
         _moveDelegates(address(0), _delegates[_to], _amount);
-    }
-
-    function burn(address _from ,uint256 _amount) public onlyOwner {
-        _burn(_from, _amount);
-        _moveDelegates(_delegates[_from], address(0), _amount);
-    }
-
-    // The PIPI TOKEN!
-    PipiToken public pipi;
-
-
-    constructor(
-        PipiToken _pipi
-    ) public {
-        pipi = _pipi;
-    }
-
-    // Safe pipi transfer function, just in case if rounding error causes pool to not have enough PIPIs.
-    function safePipiTransfer(address _to, uint256 _amount) public onlyOwner {
-        uint256 pipiBal = pipi.balanceOf(address(this));
-        if (_amount > pipiBal) {
-            pipi.transfer(_to, pipiBal);
-        } else {
-            pipi.transfer(_to, _amount);
-        }
     }
 
     // Copied and modified from YAM code:
@@ -139,9 +112,9 @@ contract PipiBar is HRC20('Little Pipi Shrimp Token', 'xPIPI') {
         );
 
         address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "PIPI::delegateBySig: invalid signature");
-        require(nonce == nonces[signatory]++, "PIPI::delegateBySig: invalid nonce");
-        require(now <= expiry, "PIPI::delegateBySig: signature expired");
+        require(signatory != address(0), "PUD::delegateBySig: invalid signature");
+        require(nonce == nonces[signatory]++, "PUD::delegateBySig: invalid nonce");
+        require(now <= expiry, "PUD::delegateBySig: signature expired");
         return _delegate(signatory, delegatee);
     }
 
@@ -171,7 +144,7 @@ contract PipiBar is HRC20('Little Pipi Shrimp Token', 'xPIPI') {
         view
         returns (uint256)
     {
-        require(blockNumber < block.number, "PIPI::getPriorVotes: not yet determined");
+        require(blockNumber < block.number, "PUD::getPriorVotes: not yet determined");
 
         uint32 nCheckpoints = numCheckpoints[account];
         if (nCheckpoints == 0) {
@@ -208,7 +181,7 @@ contract PipiBar is HRC20('Little Pipi Shrimp Token', 'xPIPI') {
         internal
     {
         address currentDelegate = _delegates[delegator];
-        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying PIPIs (not scaled);
+        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying PUDs (not scaled);
         _delegates[delegator] = delegatee;
 
         emit DelegateChanged(delegator, currentDelegate, delegatee);
@@ -244,7 +217,7 @@ contract PipiBar is HRC20('Little Pipi Shrimp Token', 'xPIPI') {
     )
         internal
     {
-        uint32 blockNumber = safe32(block.number, "PIPI::_writeCheckpoint: block number exceeds 32 bits");
+        uint32 blockNumber = safe32(block.number, "PUD::_writeCheckpoint: block number exceeds 32 bits");
 
         if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
             checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;

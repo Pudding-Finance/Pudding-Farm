@@ -2,7 +2,7 @@
 
 pragma solidity >=0.6.0;
 
-// helper methods for interacting with HRC20 tokens and sending ETH that do not consistently return true/false
+// helper methods for interacting with ORC20 tokens and sending ETH that do not consistently return true/false
 library TransferHelper {
     function safeApprove(
         address token,
