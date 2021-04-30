@@ -6,12 +6,13 @@ https://puddingswap.finance. Feel free to read the code. More details coming soo
 
 ### HOO TESTNET
 
-- PuddingToken - 
-- MasterChef - 
+- PuddingToken - 0x96D808A323d9eB1De23F7d82F83574e6969c5591
+- EggPuddingToken - 0x5F3ca22C95451CB0ce691DdcDe128AAEd3751e9C
+- MasterChef - 0x158aCA4E39537C4D1AfB2591eFD7bFf58b7d9935
 - (Uni|PuddingSwap)swapV2Factory -  
 - (Uni|PuddingSwap)swapV2Router02 -  
-- (Uni|PuddingSwap)swapV2Pair init code hash - `0xd805d4c8a7fb3567167020352386905de5d4bd188fe2284675e3ed584653df75`
-- MultiCall - 
+- (Uni|PuddingSwap)swapV2Pair init code hash - `0x000`
+- MultiCall - 0xbE8D16084841875a1f398E6C3eC00bBfcbFa571b
 
 ### HOO MAINNET
 
