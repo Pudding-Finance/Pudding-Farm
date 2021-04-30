@@ -4,9 +4,9 @@ pragma solidity >=0.5.0;
 
 import './AddressStringUtil.sol';
 
-// produces token descriptors from inconsistent or absent HRC20 symbol implementations that can return string or bytes32
+// produces token descriptors from inconsistent or absent ORC20 symbol implementations that can return string or bytes32
 // this library will always produce a string symbol to represent the token
-library SafeHRC20Namer {
+library SafeORC20Namer {
     function bytes32ToString(bytes32 x) private pure returns (string memory) {
         bytes memory bytesString = new bytes(32);
         uint256 charCount = 0;

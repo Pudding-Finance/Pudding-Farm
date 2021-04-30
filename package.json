@@ -1,10 +1,10 @@
 {
-  "name": "PancakeSwap",
+  "name": "PuddingSwap",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "migrate": "truffle migrate --network bscTestnet --reset",
-    "compile": "truffle compile --network bscTestnet",
+    "migrate": "truffle migrate --network hooTestnet --reset",
+    "compile": "truffle compile --network hooTestnet",
     "test": "npx builder test",
     "coverage": "npx builder coverage"
   },

@@ -2,7 +2,7 @@
 
 pragma solidity >=0.5.0;
 
-import './SafeHRC20Namer.sol';
+import './SafeORC20Namer.sol';
 
 // produces names for pairs of tokens using Uniswap's naming scheme
 library PairNamer {
@@ -20,9 +20,9 @@ library PairNamer {
             string(
                 abi.encodePacked(
                     prefix,
-                    SafeHRC20Namer.tokenName(token0),
+                    SafeORC20Namer.tokenName(token0),
                     TOKEN_SEPARATOR,
-                    SafeHRC20Namer.tokenName(token1),
+                    SafeORC20Namer.tokenName(token1),
                     suffix
                 )
             );
@@ -38,9 +38,9 @@ library PairNamer {
             string(
                 abi.encodePacked(
                     TOKEN_SYMBOL_PREFIX,
-                    SafeHRC20Namer.tokenSymbol(token0),
+                    SafeORC20Namer.tokenSymbol(token0),
                     TOKEN_SEPARATOR,
-                    SafeHRC20Namer.tokenSymbol(token1),
+                    SafeORC20Namer.tokenSymbol(token1),
                     suffix
                 )
             );
