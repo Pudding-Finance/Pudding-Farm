@@ -1,19 +1,19 @@
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
-const PipiToken = artifacts.require('PipiToken');
-const PipiBar = artifacts.require('PipiBar');
+const PuddingToken = artifacts.require('PuddingToken');
+const PuddingBar = artifacts.require('PuddingBar');
 const MasterChef = artifacts.require('MasterChef');
-const MockHRC20 = artifacts.require('libs/MockHRC20');
+const MockORC20 = artifacts.require('libs/MockORC20');
 
 contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
     beforeEach(async () => {
-        this.pipi = await PipiToken.new({ from: minter });
-        this.xPipi = await PipiBar.new(this.pipi.address, { from: minter });
-        this.lp1 = await MockHRC20.new('LPToken', 'LP1', '1000000', { from: minter });
-        this.lp2 = await MockHRC20.new('LPToken', 'LP2', '1000000', { from: minter });
-        this.lp3 = await MockHRC20.new('LPToken', 'LP3', '1000000', { from: minter });
-        this.chef = await MasterChef.new(this.pipi.address, this.xPipi.address, dev, '1000', '100', { from: minter });
-        await this.pipi.transferOwnership(this.chef.address, { from: minter });
-        await this.xPipi.transferOwnership(this.chef.address, { from: minter });
+        this.pudding = await PuddingToken.new({ from: minter });
+        this.xPudding = await PuddingBar.new(this.pudding.address, { from: minter });
+        this.lp1 = await MockORC20.new('LPToken', 'LP1', '1000000', { from: minter });
+        this.lp2 = await MockORC20.new('LPToken', 'LP2', '1000000', { from: minter });
+        this.lp3 = await MockORC20.new('LPToken', 'LP3', '1000000', { from: minter });
+        this.chef = await MasterChef.new(this.pudding.address, this.xPudding.address, dev, '1000', '100', { from: minter });
+        await this.pudding.transferOwnership(this.chef.address, { from: minter });
+        await this.xPudding.transferOwnership(this.chef.address, { from: minter });
 
         await this.lp1.transfer(bob, '2000', { from: minter });
         await this.lp2.transfer(bob, '2000', { from: minter });
@@ -24,12 +24,12 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
         await this.lp3.transfer(alice, '2000', { from: minter });
     });
     it('real case', async () => {
-      this.lp4 = await MockHRC20.new('LPToken', 'LP1', '1000000', { from: minter });
-      this.lp5 = await MockHRC20.new('LPToken', 'LP2', '1000000', { from: minter });
-      this.lp6 = await MockHRC20.new('LPToken', 'LP3', '1000000', { from: minter });
-      this.lp7 = await MockHRC20.new('LPToken', 'LP1', '1000000', { from: minter });
-      this.lp8 = await MockHRC20.new('LPToken', 'LP2', '1000000', { from: minter });
-      this.lp9 = await MockHRC20.new('LPToken', 'LP3', '1000000', { from: minter });
+      this.lp4 = await MockORC20.new('LPToken', 'LP1', '1000000', { from: minter });
+      this.lp5 = await MockORC20.new('LPToken', 'LP2', '1000000', { from: minter });
+      this.lp6 = await MockORC20.new('LPToken', 'LP3', '1000000', { from: minter });
+      this.lp7 = await MockORC20.new('LPToken', 'LP1', '1000000', { from: minter });
+      this.lp8 = await MockORC20.new('LPToken', 'LP2', '1000000', { from: minter });
+      this.lp9 = await MockORC20.new('LPToken', 'LP3', '1000000', { from: minter });
       await this.chef.add('2000', this.lp1.address, true, { from: minter });
       await this.chef.add('1000', this.lp2.address, true, { from: minter });
       await this.chef.add('500', this.lp3.address, true, { from: minter });
@@ -43,17 +43,17 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
 
       await time.advanceBlockTo('170');
       await this.lp1.approve(this.chef.address, '1000', { from: alice });
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '0');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '0');
       await this.chef.deposit(1, '20', { from: alice });
       await this.chef.withdraw(1, '20', { from: alice });
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '263');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '263');
 
-      await this.pipi.approve(this.chef.address, '1000', { from: alice });
+      await this.pudding.approve(this.chef.address, '1000', { from: alice });
       await this.chef.enterStaking('20', { from: alice });
       await this.chef.enterStaking('0', { from: alice });
       await this.chef.enterStaking('0', { from: alice });
       await this.chef.enterStaking('0', { from: alice });
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '993');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '993');
       // assert.equal((await this.chef.getPoolPoint(0, { from: minter })).toString(), '1900');
     })
 
@@ -71,15 +71,15 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
       assert.equal((await this.lp1.balanceOf(alice)).toString(), '1940');
       await this.chef.withdraw(1, '10', { from: alice });
       assert.equal((await this.lp1.balanceOf(alice)).toString(), '1950');
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '999');
-      assert.equal((await this.pipi.balanceOf(dev)).toString(), '100');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '999');
+      assert.equal((await this.pudding.balanceOf(dev)).toString(), '100');
 
       await this.lp1.approve(this.chef.address, '100', { from: bob });
       assert.equal((await this.lp1.balanceOf(bob)).toString(), '2000');
       await this.chef.deposit(1, '50', { from: bob });
       assert.equal((await this.lp1.balanceOf(bob)).toString(), '1950');
       await this.chef.deposit(1, '0', { from: bob });
-      assert.equal((await this.pipi.balanceOf(bob)).toString(), '125');
+      assert.equal((await this.pudding.balanceOf(bob)).toString(), '125');
       await this.chef.emergencyWithdraw(1, { from: bob });
       assert.equal((await this.lp1.balanceOf(bob)).toString(), '2000');
     })
@@ -93,16 +93,16 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
       await this.chef.deposit(1, '2', { from: alice }); //0
       await this.chef.withdraw(1, '2', { from: alice }); //1
 
-      await this.pipi.approve(this.chef.address, '250', { from: alice });
+      await this.pudding.approve(this.chef.address, '250', { from: alice });
       await this.chef.enterStaking('240', { from: alice }); //3
-      assert.equal((await this.xPipi.balanceOf(alice)).toString(), '240');
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '10');
+      assert.equal((await this.xPudding.balanceOf(alice)).toString(), '240');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '10');
       await this.chef.enterStaking('10', { from: alice }); //4
-      assert.equal((await this.xPipi.balanceOf(alice)).toString(), '250');
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '249');
+      assert.equal((await this.xPudding.balanceOf(alice)).toString(), '250');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '249');
       await this.chef.leaveStaking(250);
-      assert.equal((await this.xPipi.balanceOf(alice)).toString(), '0');
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '749');
+      assert.equal((await this.xPudding.balanceOf(alice)).toString(), '0');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '749');
 
     });
 
@@ -119,8 +119,8 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
       await this.chef.deposit(1, '0', { from: alice });
       await this.chef.deposit(1, '0', { from: bob });
 
-      await this.pipi.approve(this.chef.address, '100', { from: alice });
-      await this.pipi.approve(this.chef.address, '100', { from: bob });
+      await this.pudding.approve(this.chef.address, '100', { from: alice });
+      await this.pudding.approve(this.chef.address, '100', { from: bob });
       await this.chef.enterStaking('50', { from: alice });
       await this.chef.enterStaking('100', { from: bob });
 
@@ -131,8 +131,8 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
       await this.chef.deposit(1, '0', { from: alice });
       await this.chef.deposit(1, '0', { from: bob });
 
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '700');
-      assert.equal((await this.pipi.balanceOf(bob)).toString(), '150');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '700');
+      assert.equal((await this.pudding.balanceOf(bob)).toString(), '150');
 
       await time.advanceBlockTo('265');
 
@@ -141,8 +141,8 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
       await this.chef.deposit(1, '0', { from: alice });
       await this.chef.deposit(1, '0', { from: bob });
 
-      assert.equal((await this.pipi.balanceOf(alice)).toString(), '700');
-      assert.equal((await this.pipi.balanceOf(bob)).toString(), '150');
+      assert.equal((await this.pudding.balanceOf(alice)).toString(), '700');
+      assert.equal((await this.pudding.balanceOf(bob)).toString(), '150');
 
       await this.chef.leaveStaking('50', { from: alice });
       await this.chef.leaveStaking('100', { from: bob });
