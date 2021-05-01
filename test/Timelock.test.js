@@ -1,10 +1,10 @@
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const ethers = require('ethers');
-const PipiToken = artifacts.require('PipiToken');
+const PuddingToken = artifacts.require('PuddingToken');
 const MasterChef = artifacts.require('MasterChef');
-const MockHRC20 = artifacts.require('libs/MockHRC20');
+const MockORC20 = artifacts.require('libs/MockORC20');
 const Timelock = artifacts.require('Timelock');
-const PipiBar = artifacts.require('PipiBar');
+const PuddingBar = artifacts.require('PuddingBar');
 
 function encodeParameters(types, values) {
     const abi = new ethers.utils.AbiCoder();
@@ -13,23 +13,23 @@ function encodeParameters(types, values) {
 
 contract('Timelock', ([alice, bob, carol, dev, minter]) => {
     beforeEach(async () => {
-        this.pipi = await PipiToken.new({ from: alice });
+        this.pudding = await PuddingToken.new({ from: alice });
         this.timelock = await Timelock.new(bob, '28800', { from: alice }); //8hours
     });
 
     it('should not allow non-owner to do operation', async () => {
-        await this.pipi.transferOwnership(this.timelock.address, { from: alice });
+        await this.pudding.transferOwnership(this.timelock.address, { from: alice });
         await expectRevert(
-            this.pipi.transferOwnership(carol, { from: alice }),
+            this.pudding.transferOwnership(carol, { from: alice }),
             'Ownable: caller is not the owner',
         );
         await expectRevert(
-            this.pipi.transferOwnership(carol, { from: bob }),
+            this.pudding.transferOwnership(carol, { from: bob }),
             'Ownable: caller is not the owner',
         );
         await expectRevert(
             this.timelock.queueTransaction(
-                this.pipi.address, '0', 'transferOwnership(address)',
+                this.pudding.address, '0', 'transferOwnership(address)',
                 encodeParameters(['address'], [carol]),
                 (await time.latest()).add(time.duration.hours(6)),
                 { from: alice },
@@ -39,35 +39,35 @@ contract('Timelock', ([alice, bob, carol, dev, minter]) => {
     });
 
     it('should do the timelock thing', async () => {
-        await this.pipi.transferOwnership(this.timelock.address, { from: alice });
+        await this.pudding.transferOwnership(this.timelock.address, { from: alice });
         const eta = (await time.latest()).add(time.duration.hours(9));
         await this.timelock.queueTransaction(
-            this.pipi.address, '0', 'transferOwnership(address)',
+            this.pudding.address, '0', 'transferOwnership(address)',
             encodeParameters(['address'], [carol]), eta, { from: bob },
         );
         await time.increase(time.duration.hours(1));
         await expectRevert(
             this.timelock.executeTransaction(
-                this.pipi.address, '0', 'transferOwnership(address)',
+                this.pudding.address, '0', 'transferOwnership(address)',
                 encodeParameters(['address'], [carol]), eta, { from: bob },
             ),
             "Timelock::executeTransaction: Transaction hasn't surpassed time lock.",
         );
         await time.increase(time.duration.hours(8));
         await this.timelock.executeTransaction(
-            this.pipi.address, '0', 'transferOwnership(address)',
+            this.pudding.address, '0', 'transferOwnership(address)',
             encodeParameters(['address'], [carol]), eta, { from: bob },
         );
-        assert.equal((await this.pipi.owner()).valueOf(), carol);
+        assert.equal((await this.pudding.owner()).valueOf(), carol);
     });
 
     it('should also work with MasterChef', async () => {
-        this.lp1 = await MockHRC20.new('LPToken', 'LP', '10000000000', { from: minter });
-        this.lp2 = await MockHRC20.new('LPToken', 'LP', '10000000000', { from: minter });
-        this.xPipi = await PipiBar.new(this.pipi.address, { from: minter });
-        this.chef = await MasterChef.new(this.pipi.address, this.xPipi.address, dev, '1000', '0', { from: alice });
-        await this.pipi.transferOwnership(this.chef.address, { from: alice });
-        await this.xPipi.transferOwnership(this.chef.address, { from: minter });
+        this.lp1 = await MockORC20.new('LPToken', 'LP', '10000000000', { from: minter });
+        this.lp2 = await MockORC20.new('LPToken', 'LP', '10000000000', { from: minter });
+        this.xPudding = await PuddingBar.new(this.pudding.address, { from: minter });
+        this.chef = await MasterChef.new(this.pudding.address, this.xPudding.address, dev, '1000', '0', { from: alice });
+        await this.pudding.transferOwnership(this.chef.address, { from: alice });
+        await this.xPudding.transferOwnership(this.chef.address, { from: minter });
         await this.chef.add('100', this.lp1.address, true, { from: alice });
         await this.chef.transferOwnership(this.timelock.address, { from: alice });
         await expectRevert(
