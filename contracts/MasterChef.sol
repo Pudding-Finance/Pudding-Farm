@@ -155,7 +155,7 @@ contract MasterChef is Ownable {
             points = points.add(poolInfo[pid].allocPoint);
         }
         if (points != 0) {
-            points = points.div(3);
+            points = points.div(4);
             totalAllocPoint = totalAllocPoint.sub(poolInfo[0].allocPoint).add(points);
             poolInfo[0].allocPoint = points;
         }
@@ -204,7 +204,6 @@ contract MasterChef is Ownable {
             updatePool(pid);
         }
     }
-
 
     // Update reward variables of the given pool to be up-to-date.
     function updatePool(uint256 _pid) public {
