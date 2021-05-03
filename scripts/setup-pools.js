@@ -4,13 +4,9 @@ const contract = require("@truffle/contract");
 const PuddingPairData = require("../vendors/PuddingPair.json");
 
 const PuddingPair = contract(PuddingPairData);
-PuddingPair.setProvider(MasterChef.currentProvider);
+PuddingPair.setProvider(web3.currentProvider);
 
 const chefAddress = "0x26eE42a4DE70CEBCde40795853ebA4E492a9547F";
-
-function numToHex(num) {
-  return `0x${num.toString(16)}`;
-}
 
 async function getTokenName(tokenAddress) {
   const orc20 = await ORC20.at(tokenAddress);
@@ -51,6 +47,7 @@ module.exports = async function(callback) {
       return;
     }
 
+    console.log("add lp", point * 100, address);
     await chef.add(`${point * 100}`, address, true);
     console.log(`${symbol} added`);
   }
@@ -59,19 +56,19 @@ module.exports = async function(callback) {
     chef = await MasterChef.at(chefAddress);
 
     // CAUTION: never change the order
-    await addLP("hoo/usdt", "0xc755b69b0277d7c935466b41f266142d4a9d265b", 10); // 1
-    await addLP("pipi/hoo", "0x8041ad91327ed0d3f0ee5934217a070d16ef7aa8", 5); // 2
-    await addLP("doge/hoo", "0xb11d9f143acea34afefd21690c6c46f75ee7137e", 5); // 3
-    await addLP("eth/hoo", "0x0ee76d03ea11873d32533bb4c53be7fd58b51d8d", 5); // 4
-    await addLP("btc/hoo", "0x4c58e80f30629dcac806fdedc29da753dede5781", 5); //  5
-    await addLP("dot/hoo", "0x7eda832988314568fedf2ab304ae8151720a3240", 3); //  6
-    await addLP("fil/hoo", "0xc9feaf19f8e49fe7e95277df129d0f3285fed154", 3); //  7
-    await addLP("eos/hoo", "0x74b890faffbc6b5c6f81d086466e04afc3d21846", 2); //  8
-    await addLP("bch/hoo", "0x1cccaaff7d6613b04cb5611efaaa8413b5af542f", 2); //  9
+    // await addLP("hoo/usdt", "0xc755b69b0277d7c935466b41f266142d4a9d265b", 10); // 1
+    // await addLP("pipi/hoo", "0x8041ad91327ed0d3f0ee5934217a070d16ef7aa8", 5); // 2
+    // await addLP("doge/hoo", "0xb11d9f143acea34afefd21690c6c46f75ee7137e", 5); // 3
+    // await addLP("eth/hoo", "0x0ee76d03ea11873d32533bb4c53be7fd58b51d8d", 5); // 4
+    // await addLP("btc/hoo", "0x4c58e80f30629dcac806fdedc29da753dede5781", 5); //  5
+    // await addLP("dot/hoo", "0x7eda832988314568fedf2ab304ae8151720a3240", 3); //  6
+    // await addLP("fil/hoo", "0xc9feaf19f8e49fe7e95277df129d0f3285fed154", 3); //  7
+    // await addLP("eos/hoo", "0x74b890faffbc6b5c6f81d086466e04afc3d21846", 2); //  8
+    // await addLP("bch/hoo", "0x1cccaaff7d6613b04cb5611efaaa8413b5af542f", 2); //  9
 
-    // await addLP("tpt/hoo", "xx", 5);
-    // await addLP("pud/usdt", "xx", 35);
-    // await addLP("pud/hoo", "xx", 20);
+    // await addLP("tpt/hoo", "0x82BC08444C3ef16cA52e1A5979028F0CaD9F15cd", 5); // 10
+    // await addLP("pud/usdt", "0xc6f4e20ec8f6819a72e0f419e5d3edf70fb0b620", 35); // 11
+    //  await addLP("pud/hoo", "0x593de6673ad09b69103f5b95175cddd05f6880b3", 20); // 12
   } catch (error) {
     return callback(error);
   }
