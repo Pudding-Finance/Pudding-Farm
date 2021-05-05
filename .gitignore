@@ -1,6 +1,9 @@
 /node_modules/
 /build/
 /migrations/
+/scripts
+
+.DS_Store
 
 node_modules
 
