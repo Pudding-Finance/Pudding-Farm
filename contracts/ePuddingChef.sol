@@ -120,15 +120,6 @@ contract ePuddingChef is Ownable {
         pool.lastRewardBlock = block.number;
     }
 
-    // Update reward variables for all pools. Be careful of gas spending!
-    function massUpdatePools() public {
-        uint256 length = poolInfo.length;
-        for (uint256 pid = 0; pid < length; ++pid) {
-            updatePool(pid);
-        }
-    }
-
-
     // Stake ePUD tokens to ePuddingChef
     function deposit(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
