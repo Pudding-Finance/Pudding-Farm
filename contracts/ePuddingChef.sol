@@ -24,7 +24,7 @@ contract ePuddingChef is Ownable {
     }
 
     // The PUD TOKEN!
-    IORC20 public xPudding;
+    IORC20 public ePudding;
     IORC20 public rewardToken;
 
     // uint256 public maxStaking;
@@ -48,13 +48,13 @@ contract ePuddingChef is Ownable {
     event EmergencyWithdraw(address indexed user, uint256 amount);
 
     constructor(
-        IORC20 _xPudding,
+        IORC20 _ePudding,
         IORC20 _rewardToken,
         uint256 _rewardPerBlock,
         uint256 _startBlock,
         uint256 _bonusEndBlock
     ) public {
-        xPudding = _xPudding;
+        ePudding = _ePudding;
         rewardToken = _rewardToken;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
@@ -62,7 +62,7 @@ contract ePuddingChef is Ownable {
 
         // staking pool
         poolInfo.push(PoolInfo({
-            lpToken: _xPudding,
+            lpToken: _ePudding,
             allocPoint: 1000,
             lastRewardBlock: startBlock,
             accPuddingPerShare: 0
@@ -129,7 +129,7 @@ contract ePuddingChef is Ownable {
     }
 
 
-    // Stake xPUD tokens to xPuddingChef
+    // Stake ePUD tokens to ePuddingChef
     function deposit(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
@@ -152,7 +152,7 @@ contract ePuddingChef is Ownable {
         emit Deposit(msg.sender, _amount);
     }
 
-    // Withdraw xPUD tokens from STAKING.
+    // Withdraw ePUD tokens from STAKING.
     function withdraw(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
