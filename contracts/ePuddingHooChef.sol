@@ -134,12 +134,13 @@ contract ePuddingChef is Ownable {
     }
 
     function safeTransferHOO(address to, uint256 value) internal {
-        (bool success, ) = to.call{value: value}(new bytes(0));
+        (bool success, ) = to.call{gas: 23000, value: value}(new bytes(0));
         require(success, "TransferHelper: HOO_TRANSFER_FAILED");
     }
 
     // Stake ePUD tokens to ePuddingChef
     function deposit(uint256 _amount) public {
+        uint256 pending = 0;
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
 
@@ -147,13 +148,9 @@ contract ePuddingChef is Ownable {
 
         updatePool(0);
         if (user.amount > 0) {
-            uint256 pending =
-                user.amount.mul(pool.accPuddingPerShare).div(1e12).sub(
-                    user.rewardDebt
-                );
-            if (pending > 0) {
-                safeTransferHOO(address(msg.sender), pending);
-            }
+            pending = user.amount.mul(pool.accPuddingPerShare).div(1e12).sub(
+                user.rewardDebt
+            );
         }
         if (_amount > 0) {
             pool.lpToken.safeTransferFrom(
@@ -163,8 +160,11 @@ contract ePuddingChef is Ownable {
             );
             user.amount = user.amount.add(_amount);
         }
-        user.rewardDebt = user.amount.mul(pool.accPuddingPerShare).div(1e12);
 
+        user.rewardDebt = user.amount.mul(pool.accPuddingPerShare).div(1e12);
+        if (pending > 0) {
+            safeTransferHOO(address(msg.sender), pending);
+        }
         emit Deposit(msg.sender, _amount);
     }
 
@@ -178,15 +178,14 @@ contract ePuddingChef is Ownable {
             user.amount.mul(pool.accPuddingPerShare).div(1e12).sub(
                 user.rewardDebt
             );
-        if (pending > 0) {
-            safeTransferHOO(address(msg.sender), pending);
-        }
         if (_amount > 0) {
             user.amount = user.amount.sub(_amount);
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
         }
         user.rewardDebt = user.amount.mul(pool.accPuddingPerShare).div(1e12);
-
+        if (pending > 0) {
+            safeTransferHOO(address(msg.sender), pending);
+        }
         emit Withdraw(msg.sender, _amount);
     }
 
