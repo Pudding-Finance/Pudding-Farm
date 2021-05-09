@@ -4,8 +4,9 @@ import "./libs/math/SafeMath.sol";
 import "./libs/token/ORC20/IORC20.sol";
 import "./libs/token/ORC20/SafeORC20.sol";
 import "./libs/access/Ownable.sol";
+import "./libs/utils/ReentrancyGuard.sol";
 
-contract ePuddingChef is Ownable {
+contract ePuddingChef is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeORC20 for IORC20;
 
@@ -139,7 +140,7 @@ contract ePuddingChef is Ownable {
     }
 
     // Stake ePUD tokens to ePuddingChef
-    function deposit(uint256 _amount) public {
+    function deposit(uint256 _amount) public nonReentrant {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
 
@@ -169,7 +170,7 @@ contract ePuddingChef is Ownable {
     }
 
     // Withdraw ePUD tokens from STAKING.
-    function withdraw(uint256 _amount) public {
+    function withdraw(uint256 _amount) public nonReentrant {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
