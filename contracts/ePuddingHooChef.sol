@@ -210,4 +210,9 @@ contract ePuddingHooChef is Ownable, ReentrancyGuard {
         require(_amount < address(this).balance, "not enough token");
         safeTransferHOO(address(msg.sender), _amount);
     }
+
+    function recieveReward() external payable {
+       require(msg.sender != address(0));
+       require(msg.value != 0);
+     }
 }

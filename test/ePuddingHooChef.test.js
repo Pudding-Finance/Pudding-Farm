@@ -39,21 +39,33 @@ contract("ePudHooChef", ([alice, bob, deployer]) => {
 
     await this.xPudding.mint(alice, 100, { from: deployer });
     await this.xPudding.mint(bob, 100, { from: deployer });
+    await this.chef.recieveReward({ from: alice, value: '100000' });
+    // await web3.eth.sendTransaction({ from: deployer, to: this.chef, value: '10000000000'})
   });
 
   it("deposit", async () => {
     let aliceStartBalance = await getBalance(alice);
     let bobStartBalance = await getBalance(bob);
     let deployerBalance = await getBalance(deployer);
+    // let chefBalance = await getBalance(this.chef);
 
     console.log('alice', alice, aliceStartBalance);
     console.log('bob', bob, bobStartBalance);
     console.log('deployer', deployer, deployerBalance);
+   // console.log('chefBalance', this.chef.address, chefBalance);
 
     await time.advanceBlockTo(currentBlock + 170);
 
     await this.chef.deposit(100, { from: alice });
+
+    await time.advanceBlockTo(currentBlock + 180);
+
+    console.log('alice', await getBalance(alice));
+    console.log('alice pendingReward', (await this.chef.pendingReward(alice)).toString());
+
     await this.chef.deposit(0, { from: alice });
+
+    console.log('alice', await getBalance(alice));
     // let awardedNum = getStakingReward(20, 20, 1);
 
     // let aliceBalance = await getBalance(alice);
