@@ -4,8 +4,10 @@ import "./libs/math/SafeMath.sol";
 import "./libs/token/ORC20/IORC20.sol";
 import "./libs/token/ORC20/SafeORC20.sol";
 import "./libs/access/Ownable.sol";
+import "./libs/utils/ReentrancyGuard.sol";
+import "@nomiclabs/buidler/console.sol";
 
-contract ePuddingChef is Ownable {
+contract ePuddingHooChef is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeORC20 for IORC20;
 
@@ -134,12 +136,14 @@ contract ePuddingChef is Ownable {
     }
 
     function safeTransferHOO(address to, uint256 value) internal {
+        console.log('to', to);
         (bool success, ) = to.call{gas: 23000, value: value}(new bytes(0));
         require(success, "TransferHelper: HOO_TRANSFER_FAILED");
     }
 
     // Stake ePUD tokens to ePuddingChef
-    function deposit(uint256 _amount) public {
+    function deposit(uint256 _amount) public nonReentrant {
+        console.log("deposit");
         uint256 pending = 0;
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
@@ -151,6 +155,11 @@ contract ePuddingChef is Ownable {
             pending = user.amount.mul(pool.accPuddingPerShare).div(1e12).sub(
                 user.rewardDebt
             );
+            if (pending > 0) {
+                console.log("1111", 111);
+                safeTransferHOO(address(msg.sender), pending);
+                console.log("222", 222);
+            }
         }
         if (_amount > 0) {
             pool.lpToken.safeTransferFrom(
@@ -162,14 +171,11 @@ contract ePuddingChef is Ownable {
         }
 
         user.rewardDebt = user.amount.mul(pool.accPuddingPerShare).div(1e12);
-        if (pending > 0) {
-            safeTransferHOO(address(msg.sender), pending);
-        }
         emit Deposit(msg.sender, _amount);
     }
 
     // Withdraw ePUD tokens from STAKING.
-    function withdraw(uint256 _amount) public {
+    function withdraw(uint256 _amount) public nonReentrant {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
@@ -178,14 +184,14 @@ contract ePuddingChef is Ownable {
             user.amount.mul(pool.accPuddingPerShare).div(1e12).sub(
                 user.rewardDebt
             );
+        if (pending > 0) {
+            safeTransferHOO(address(msg.sender), pending);
+        }
         if (_amount > 0) {
             user.amount = user.amount.sub(_amount);
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
         }
         user.rewardDebt = user.amount.mul(pool.accPuddingPerShare).div(1e12);
-        if (pending > 0) {
-            safeTransferHOO(address(msg.sender), pending);
-        }
         emit Withdraw(msg.sender, _amount);
     }
 
