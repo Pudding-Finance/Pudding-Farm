@@ -2,8 +2,6 @@
 
 pragma solidity ^0.6.0;
 
-import "@nomiclabs/buidler/console.sol";
-
 /**
  * @dev Contract module that helps prevent reentrant calls to a function.
  *
@@ -52,7 +50,6 @@ contract ReentrancyGuard {
         // On the first call to nonReentrant, _notEntered will be true
         require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
 
-        console.log("nonReentrant enter");
         // Any calls to nonReentrant after this point will fail
         _status = _ENTERED;
 
@@ -61,6 +58,5 @@ contract ReentrancyGuard {
         // By storing the original value once again, a refund is triggered (see
         // https://eips.ethereum.org/EIPS/eip-2200)
         _status = _NOT_ENTERED;
-        console.log("nonReentrant exit");
     }
 }

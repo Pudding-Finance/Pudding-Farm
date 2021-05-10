@@ -1,18 +1,18 @@
-const { expectRevert, time } = require("@openzeppelin/test-helpers");
+const { time } = require("@openzeppelin/test-helpers");
 const PuddingToken = artifacts.require("PuddingToken");
 const ePudHooChef = artifacts.require("ePuddingHooChef");
 const PuddingBar = artifacts.require("PuddingBar");
-const MockORC20 = artifacts.require("libs/MockORC20");
 
 function getStakingReward(staked, totalStaked, block) {
   const tokenPerBlock = 10;
   const v = (staked / totalStaked) * block * tokenPerBlock;
-  return v;
+  return web3.utils.toBN(v);
 }
 
-async function getBalance(address) {
-  return await web3.eth.getBalance(address);
-}
+// async function getBalance(address) {
+//   const balance = await web3.eth.getBalance(address);
+//   return web3.utils.toBN(balance);
+// }
 
 contract("ePudHooChef", ([alice, bob, deployer]) => {
   let currentBlock;
@@ -39,36 +39,26 @@ contract("ePudHooChef", ([alice, bob, deployer]) => {
 
     await this.xPudding.mint(alice, 100, { from: deployer });
     await this.xPudding.mint(bob, 100, { from: deployer });
-    await this.chef.recieveReward({ from: alice, value: '100000' });
-    // await web3.eth.sendTransaction({ from: deployer, to: this.chef, value: '10000000000'})
+    await web3.eth.sendTransaction({
+      from: deployer,
+      to: this.chef.address,
+      value: "100000"
+    });
   });
 
-  it("deposit", async () => {
-    let aliceStartBalance = await getBalance(alice);
-    let bobStartBalance = await getBalance(bob);
-    let deployerBalance = await getBalance(deployer);
-    // let chefBalance = await getBalance(this.chef);
-
-    console.log('alice', alice, aliceStartBalance);
-    console.log('bob', bob, bobStartBalance);
-    console.log('deployer', deployer, deployerBalance);
-   // console.log('chefBalance', this.chef.address, chefBalance);
-
+  it("deposit/withdraw", async () => {
     await time.advanceBlockTo(currentBlock + 170);
 
     await this.chef.deposit(100, { from: alice });
 
     await time.advanceBlockTo(currentBlock + 180);
 
-    console.log('alice', await getBalance(alice));
-    console.log('alice pendingReward', (await this.chef.pendingReward(alice)).toString());
+    assert.equal(
+      (await this.chef.pendingReward(alice)).toString(),
+      getStakingReward(100, 100, 9).toString()
+    );
 
-    await this.chef.deposit(0, { from: alice });
-
-    console.log('alice', await getBalance(alice));
-    // let awardedNum = getStakingReward(20, 20, 1);
-
-    // let aliceBalance = await getBalance(alice);
-    // assert.equal(aliceStartBalance + awardedNum, aliceBalance);
+    await this.chef.withdraw(100, { from: alice });
+    assert.equal((await this.chef.pendingReward(alice)).toString(), "0");
   });
 });

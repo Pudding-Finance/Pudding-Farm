@@ -5,7 +5,7 @@ import "./libs/token/ORC20/IORC20.sol";
 import "./libs/token/ORC20/SafeORC20.sol";
 import "./libs/access/Ownable.sol";
 import "./libs/utils/ReentrancyGuard.sol";
-import "@nomiclabs/buidler/console.sol";
+// import "@nomiclabs/buidler/console.sol";
 
 contract ePuddingHooChef is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
@@ -136,14 +136,12 @@ contract ePuddingHooChef is Ownable, ReentrancyGuard {
     }
 
     function safeTransferHOO(address to, uint256 value) internal {
-        console.log('to', to);
         (bool success, ) = to.call{gas: 23000, value: value}(new bytes(0));
         require(success, "TransferHelper: HOO_TRANSFER_FAILED");
     }
 
     // Stake ePUD tokens to ePuddingChef
     function deposit(uint256 _amount) public nonReentrant {
-        console.log("deposit");
         uint256 pending = 0;
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
@@ -156,9 +154,7 @@ contract ePuddingHooChef is Ownable, ReentrancyGuard {
                 user.rewardDebt
             );
             if (pending > 0) {
-                console.log("1111", 111);
                 safeTransferHOO(address(msg.sender), pending);
-                console.log("222", 222);
             }
         }
         if (_amount > 0) {
@@ -211,8 +207,8 @@ contract ePuddingHooChef is Ownable, ReentrancyGuard {
         safeTransferHOO(address(msg.sender), _amount);
     }
 
-    function recieveReward() external payable {
-       require(msg.sender != address(0));
-       require(msg.value != 0);
-     }
+    receive() external payable {
+        require(msg.sender != address(0));
+        require(msg.value != 0);
+    }
 }
