@@ -25,4 +25,5 @@ https://puddingswap.finance. Feel free to read the code. More details coming soo
 - (Uni|PuddingSwap)swapV2Pair init code hash - `0x80bd44b36fff03b8bb0913a44b51ae0e27c1d42bc4a5dd86a7c9a6a714739241`
 - MultiCall - 0x03fF6895aB1Fdff998665E34368B69a032F50578
 - WHOO - 0x3EFF9D389D13D6352bfB498BCF616EF9b1BEaC87
+- UserProfile - 0xC9866C73518e4696fa7Fc50f68462ADa0EEEDC0f
 

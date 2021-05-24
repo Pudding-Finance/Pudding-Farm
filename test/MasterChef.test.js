@@ -29,86 +29,90 @@ function getStakingReward(staked, totalStaked, block) {
 }
 
 contract("MasterChef", ([alice, bob, carol, dev, minter]) => {
-  // beforeEach(async () => {
-  //   this.pudding = await PuddingToken.new({ from: minter });
-  //   this.xPudding = await PuddingBar.new(this.pudding.address, {
-  //     from: minter
-  //   });
-  //   this.lp1 = await MockORC20.new("LPToken", "LP1", "1000000", {
-  //     from: minter
-  //   });
-  //   this.lp2 = await MockORC20.new("LPToken", "LP2", "1000000", {
-  //     from: minter
-  //   });
-  //   this.lp3 = await MockORC20.new("LPToken", "LP3", "1000000", {
-  //     from: minter
-  //   });
-  //   this.chef = await MasterChef.new(
-  //     this.pudding.address,
-  //     this.xPudding.address,
-  //     dev,
-  //     "1000",
-  //     "100",
-  //     { from: minter }
-  //   );
-  //   await this.pudding.transferOwnership(this.chef.address, { from: minter });
-  //   await this.xPudding.transferOwnership(this.chef.address, { from: minter });
+  let currentBlock;
 
-  //   await this.lp1.transfer(bob, "2000", { from: minter });
-  //   await this.lp2.transfer(bob, "2000", { from: minter });
-  //   await this.lp3.transfer(bob, "2000", { from: minter });
+  beforeEach(async () => {
+    currentBlock = await web3.eth.getBlockNumber();
 
-  //   await this.lp1.transfer(alice, "2000", { from: minter });
-  //   await this.lp2.transfer(alice, "2000", { from: minter });
-  //   await this.lp3.transfer(alice, "2000", { from: minter });
-  // });
-  // it("real case", async () => {
-  //   this.lp4 = await MockORC20.new("LPToken", "LP1", "1000000", {
-  //     from: minter
-  //   });
-  //   this.lp5 = await MockORC20.new("LPToken", "LP2", "1000000", {
-  //     from: minter
-  //   });
-  //   this.lp6 = await MockORC20.new("LPToken", "LP3", "1000000", {
-  //     from: minter
-  //   });
-  //   this.lp7 = await MockORC20.new("LPToken", "LP1", "1000000", {
-  //     from: minter
-  //   });
-  //   this.lp8 = await MockORC20.new("LPToken", "LP2", "1000000", {
-  //     from: minter
-  //   });
-  //   this.lp9 = await MockORC20.new("LPToken", "LP3", "1000000", {
-  //     from: minter
-  //   });
-  //   await this.chef.add("2000", this.lp1.address, true, { from: minter });
-  //   await this.chef.add("1000", this.lp2.address, true, { from: minter });
-  //   await this.chef.add("500", this.lp3.address, true, { from: minter });
-  //   await this.chef.add("500", this.lp3.address, true, { from: minter });
-  //   await this.chef.add("500", this.lp3.address, true, { from: minter });
-  //   await this.chef.add("500", this.lp3.address, true, { from: minter });
-  //   await this.chef.add("500", this.lp3.address, true, { from: minter });
-  //   await this.chef.add("100", this.lp3.address, true, { from: minter });
-  //   await this.chef.add("100", this.lp3.address, true, { from: minter });
-  //   assert.equal((await this.chef.poolLength()).toString(), "10");
+    this.pudding = await PuddingToken.new({ from: minter });
+    this.xPudding = await PuddingBar.new(this.pudding.address, {
+      from: minter
+    });
+    this.lp1 = await MockORC20.new("LPToken", "LP1", "1000000", {
+      from: minter
+    });
+    this.lp2 = await MockORC20.new("LPToken", "LP2", "1000000", {
+      from: minter
+    });
+    this.lp3 = await MockORC20.new("LPToken", "LP3", "1000000", {
+      from: minter
+    });
+    this.chef = await MasterChef.new(
+      this.pudding.address,
+      this.xPudding.address,
+      dev,
+      "1000",
+      currentBlock + 100,
+      { from: minter }
+    );
+    await this.pudding.transferOwnership(this.chef.address, { from: minter });
+    await this.xPudding.transferOwnership(this.chef.address, { from: minter });
 
-  //   await time.advanceBlockTo("170");
-  //   await this.lp1.approve(this.chef.address, "1000", { from: alice });
-  //   assert.equal((await this.pudding.balanceOf(alice)).toString(), "0");
-  //   await this.chef.deposit(1, "20", { from: alice });
-  //   await this.chef.withdraw(1, "20", { from: alice });
-  //   let awardedNum = getLPReward(2000, 5700, 1);
-  //   assert.equal((await this.pudding.balanceOf(alice)).toNumber(), awardedNum);
+    await this.lp1.transfer(bob, "2000", { from: minter });
+    await this.lp2.transfer(bob, "2000", { from: minter });
+    await this.lp3.transfer(bob, "2000", { from: minter });
 
-  //   await this.pudding.approve(this.chef.address, "1000", { from: alice });
-  //   await this.chef.enterStaking("20", { from: alice });
-  //   await this.chef.enterStaking("0", { from: alice });
-  //   await this.chef.enterStaking("0", { from: alice });
-  //   await this.chef.enterStaking("0", { from: alice });
-  //   awardedNum += getStakingReward(20, 20, 3) - 20;
-  //   assert.equal((await this.pudding.balanceOf(alice)).toNumber(), awardedNum);
-  //   // assert.equal((await this.chef.getPoolPoint(0, { from: minter })).toString(), '1900');
-  // });
+    await this.lp1.transfer(alice, "2000", { from: minter });
+    await this.lp2.transfer(alice, "2000", { from: minter });
+    await this.lp3.transfer(alice, "2000", { from: minter });
+  });
+  it("real case", async () => {
+    this.lp4 = await MockORC20.new("LPToken", "LP1", "1000000", {
+      from: minter
+    });
+    this.lp5 = await MockORC20.new("LPToken", "LP2", "1000000", {
+      from: minter
+    });
+    this.lp6 = await MockORC20.new("LPToken", "LP3", "1000000", {
+      from: minter
+    });
+    this.lp7 = await MockORC20.new("LPToken", "LP1", "1000000", {
+      from: minter
+    });
+    this.lp8 = await MockORC20.new("LPToken", "LP2", "1000000", {
+      from: minter
+    });
+    this.lp9 = await MockORC20.new("LPToken", "LP3", "1000000", {
+      from: minter
+    });
+    await this.chef.add("2000", this.lp1.address, true, { from: minter });
+    await this.chef.add("1000", this.lp2.address, true, { from: minter });
+    await this.chef.add("500", this.lp3.address, true, { from: minter });
+    await this.chef.add("500", this.lp3.address, true, { from: minter });
+    await this.chef.add("500", this.lp3.address, true, { from: minter });
+    await this.chef.add("500", this.lp3.address, true, { from: minter });
+    await this.chef.add("500", this.lp3.address, true, { from: minter });
+    await this.chef.add("100", this.lp3.address, true, { from: minter });
+    await this.chef.add("100", this.lp3.address, true, { from: minter });
+    assert.equal((await this.chef.poolLength()).toString(), "10");
+
+    await time.advanceBlockTo(currentBlock + 170);
+    await this.lp1.approve(this.chef.address, "1000", { from: alice });
+    assert.equal((await this.pudding.balanceOf(alice)).toString(), "0");
+    await this.chef.deposit(1, "20", { from: alice });
+    await this.chef.withdraw(1, "20", { from: alice });
+    let awardedNum = getLPReward(2000, 5700, 1);
+    assert.equal((await this.pudding.balanceOf(alice)).toNumber(), awardedNum);
+
+    await this.pudding.approve(this.chef.address, "1000", { from: alice });
+    await this.chef.enterStaking("20", { from: alice });
+    await this.chef.enterStaking("0", { from: alice });
+    await this.chef.enterStaking("0", { from: alice });
+    await this.chef.enterStaking("0", { from: alice });
+    awardedNum += getStakingReward(20, 20, 3) - 20;
+    assert.equal((await this.pudding.balanceOf(alice)).toNumber(), awardedNum);
+    // assert.equal((await this.chef.getPoolPoint(0, { from: minter })).toString(), '1900');
+  });
 
   // it("deposit/withdraw", async () => {
   //   await this.chef.add("1000", this.lp1.address, true, { from: minter });
