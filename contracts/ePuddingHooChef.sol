@@ -203,7 +203,7 @@ contract ePuddingHooChef is Ownable, ReentrancyGuard {
 
     // Withdraw reward. EMERGENCY ONLY.
     function emergencyRewardWithdraw(uint256 _amount) public onlyOwner {
-        require(_amount < address(this).balance, "not enough token");
+        require(_amount <= address(this).balance, "not enough token");
         safeTransferHOO(address(msg.sender), _amount);
     }
 

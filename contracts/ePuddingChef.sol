@@ -174,7 +174,7 @@ contract ePuddingChef is Ownable {
 
     // Withdraw reward. EMERGENCY ONLY.
     function emergencyRewardWithdraw(uint256 _amount) public onlyOwner {
-        require(_amount < rewardToken.balanceOf(address(this)), 'not enough token');
+        require(_amount <= rewardToken.balanceOf(address(this)), 'not enough token');
         rewardToken.safeTransfer(address(msg.sender), _amount);
     }
 
