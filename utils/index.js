@@ -1,5 +1,9 @@
 const SECONDS_PER_BLOCK = 3;
 
+function getDeadAddress() {
+  return "0x000000000000000000000000000000000000dead";
+}
+
 function numToHex(num) {
   return `0x${num.toString(16)}`;
 }
@@ -21,6 +25,7 @@ function formatDecimals(num, precision = 2) {
 }
 
 module.exports = {
+  getDeadAddress,
   numToHex,
   getBlockFromTime,
   formatDecimals
