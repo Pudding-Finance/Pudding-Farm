@@ -2,6 +2,7 @@
 /build/
 /migrations/
 /scripts
+/tasks
 
 .DS_Store
 
