@@ -27,6 +27,7 @@ https://puddingswap.finance. Feel free to read the code. More details coming soo
 - WHOO - 0x3EFF9D389D13D6352bfB498BCF616EF9b1BEaC87
 - UserProfile - 0xC9866C73518e4696fa7Fc50f68462ADa0EEEDC0f
 - LP Token For Burnning Pud - 0xF2d0dFEbccB67EA8c11bb0ca73d605e74DE02027
+- VaultPudding - 0x51C3fa2FC017Ec07EBfF4B65c3269e06c145a220
 
 | PID |     LP      | Address                                    |
 | :-: | :---------: | :----------------------------------------- |
@@ -71,4 +72,7 @@ https://puddingswap.finance. Feel free to read the code. More details coming soo
 | 39  |  GDC/USDT   | 0xa9b5150F2Be033668a6D3567Ce5e07D7fa98E19C |
 | 40  | CLAIM/USDT  | 0xFF66f2e48DD7b46cDC9500Dd6a17A4ABd0b7f143 |
 | 41  |  ROO/USDT   | 0xf8ba103dd9e4Cd87DEEC6D35c12f231E5b23E9BB |
+| 42  |  STK/USDT   | 0xa4862Ee07ac6315576297A4630F09650A5b428A8 |
+| 43  | TITAN/USDT  | 0x74B057b19EcA62648a9e77913Fc834e3C7294A2C |
+| 44  |  SAME/USDT  | 0x900F72b178b4721917CE98d1D7FA1EcaE88d1bc8 |
 |  -  |      -      | -                                          |
