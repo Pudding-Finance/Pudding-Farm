@@ -1,3 +1,6 @@
+const Big = require("big.js");
+const web3 = require("web3");
+
 const SECONDS_PER_BLOCK = 3;
 
 function getDeadAddress() {
@@ -24,9 +27,15 @@ function formatDecimals(num, precision = 2) {
   return Math.floor(num * magicNum) / magicNum;
 }
 
+function formatUnits(number, units = 2, decimalPlaces) {
+  const num = new Big(web3.utils.toBN(number).toString());
+  return num.div(new Big(10).pow(units)).toFixed(decimalPlaces, Big.roundDown);
+}
+
 module.exports = {
   getDeadAddress,
   numToHex,
   getBlockFromTime,
-  formatDecimals
+  formatDecimals,
+  formatUnits
 };

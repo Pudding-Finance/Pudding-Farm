@@ -2,6 +2,12 @@
 
 https://puddingswap.finance. Feel free to read the code. More details coming soon.
 
+## scripts
+
+```
+npx truffle exec <script> --network <network>
+```
+
 ## Deployed Contracts / Hash
 
 ### HOO TESTNET
@@ -78,4 +84,6 @@ https://puddingswap.finance. Feel free to read the code. More details coming soo
 | 44  |    SAME/USDT     | 0x900F72b178b4721917CE98d1D7FA1EcaE88d1bc8 |
 | 45  | SleepPUD(legacy) | 0xda6777900eF022E7A82390B2e5EE9E665320328A |
 | 46  |     SleepPUD     | 0x04996002eF720fa82590E2e8449fE2D087868008 |
+| 47  |     SHIB/HOO     | 0xe5F60004503fDBdccf5904C0dAb0473eB5EB4394 |
+| 48  |     SHIB/PUD     | 0x1B3B5dDe9cf248A315b46d18bDC95545b56526E6 |
 |  -  |        -         | -                                          |
